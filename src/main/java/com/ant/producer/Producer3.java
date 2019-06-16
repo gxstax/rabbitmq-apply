@@ -30,8 +30,8 @@ public class Producer3 {
 
         // 绑定交换机与队列
         channel.queueBind(ConnectionUtil.QUENU_NAME, ConnectionUtil.EXCHANGE_NAME, ConnectionUtil.TOPIC);
-        channel.queueBind(ConnectionUtil.QUENU_NAME_1, ConnectionUtil.EXCHANGE_NAME, ConnectionUtil.TOPIC_1);
-        channel.queueBind(ConnectionUtil.QUENU_NAME_2, ConnectionUtil.EXCHANGE_NAME, ConnectionUtil.TOPIC_2);
+//        channel.queueBind(ConnectionUtil.QUENU_NAME_1, ConnectionUtil.EXCHANGE_NAME, ConnectionUtil.TOPIC_1);
+//        channel.queueBind(ConnectionUtil.QUENU_NAME_2, ConnectionUtil.EXCHANGE_NAME, ConnectionUtil.TOPIC_2);
 
         // 参数信息
         // 1：队列名称
@@ -42,17 +42,22 @@ public class Producer3 {
         channel.queueDeclare(ConnectionUtil.QUENU_NAME, true, false, false, null);
 
 
-        String[] strings = new String[]{"error", "debug", "info"};
-        String[] strings1 = new String[]{"user", "order", "email"};
-        String[] strings2 = new String[]{"A", "B", "C"};
-        for (int i = 0; i < 3; i++) {
-            for (int j = 0; j < 3; j++) {
-                for (int k = 0; k < 3; k++) {
-                    String topic = strings[i]+"."+strings1[j]+"."+strings2[k];
-                    // 发布一条消息
-                    channel.basicPublish(ConnectionUtil.EXCHANGE_NAME, topic,null, topic.getBytes());
-                }
-            }
+//        String[] strings = new String[]{"error", "debug", "info"};
+//        String[] strings1 = new String[]{"user", "order", "email"};
+//        String[] strings2 = new String[]{"A", "B", "C"};
+//        for (int i = 0; i < 3; i++) {
+//            for (int j = 0; j < 3; j++) {
+//                for (int k = 0; k < 3; k++) {
+//                    String topic = strings[i]+"."+strings1[j]+"."+strings2[k];
+//                    // 发布一条消息
+//                    channel.basicPublish(ConnectionUtil.EXCHANGE_NAME, topic,null, topic.getBytes());
+//                }
+//            }
+//        }
+
+        for (int i = 0; i < 1200000; i++) {
+            // 发布一条消息
+            channel.basicPublish(ConnectionUtil.EXCHANGE_NAME, "debug.order.B",null, ("message"+i).getBytes());
         }
 
         // 关闭信道

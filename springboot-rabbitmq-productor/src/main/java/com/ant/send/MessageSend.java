@@ -24,9 +24,9 @@ public class MessageSend {
     public void sendMessage(String exchange, String routekey, String message) {
         CorrelationData correlationData = new CorrelationData("orderID");
 
-        Map<String, String> map = new HashMap<>();
-        map.put("key1", "value1");
+//        Map<String, String> map = new HashMap<>();
+////        map.put("key1", "value1");
 
-        rabbitTemplate.convertAndSend(exchange, routekey, map, correlationData);
+        rabbitTemplate.convertAndSend(exchange, routekey, message, correlationData);
     }
 }

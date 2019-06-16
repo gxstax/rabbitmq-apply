@@ -17,9 +17,9 @@ public class MyMessageConverter implements MessageConverter {
     @Override
     public Message toMessage(Object obj, MessageProperties messageProperties) throws MessageConversionException {
         // 解决消息队列解析为二进制字节码--消费者1：123,34,107,101,121,49,34,58,34,118,97,108,117,101,49,34,125
-        messageProperties.setContentType("text/plain");
+        messageProperties.setContentType("text/xml");
         Message message = new Message(JSON.toJSONBytes(obj), messageProperties);
-        System.out.println("toMessage");
+//        System.out.println("toMessage");
         return message;
     }
 

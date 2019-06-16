@@ -4,7 +4,6 @@ import com.ant.util.ConnectionUtil;
 import com.rabbitmq.client.BuiltinExchangeType;
 import com.rabbitmq.client.Channel;
 import com.rabbitmq.client.Connection;
-
 import java.io.IOException;
 import java.util.concurrent.TimeoutException;
 
@@ -24,6 +23,7 @@ public class Producer {
         Channel channel = connection.createChannel();
 
         // 定义一个交换机
+        channel.exchangeDelete(ConnectionUtil.EXCHANGE_NAME);
         channel.exchangeDeclare(ConnectionUtil.EXCHANGE_NAME, BuiltinExchangeType.FANOUT);
 
         // 绑定交换机与队列
@@ -38,9 +38,9 @@ public class Producer {
         // 5：队列消息配置项（最大容量，寿命）这个后面补充
         channel.queueDeclare(ConnectionUtil.QUENU_NAME, true, false, false, null);
 
-        for (int i = 0; i < 2; i++) {
+        for (int i = 0; i < 100; i++) {
             // 发布一条消息
-            channel.basicPublish(ConnectionUtil.EXCHANGE_NAME, "",null, ("hello Ant").getBytes());
+            channel.basicPublish(ConnectionUtil.EXCHANGE_NAME, "",null, ("hello Ant"+i).getBytes());
         }
 
         // 关闭信道

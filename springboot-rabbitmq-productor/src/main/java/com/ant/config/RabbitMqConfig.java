@@ -3,11 +3,16 @@ package com.ant.config;
 import com.ant.callback.MyConfirmCallback;
 import com.ant.callback.MyReturnCallback;
 import com.ant.converter.MyMessageConverter;
+import org.springframework.amqp.core.Binding;
+import org.springframework.amqp.core.BindingBuilder;
 import org.springframework.amqp.core.DirectExchange;
 import org.springframework.amqp.core.Message;
+import org.springframework.amqp.core.Queue;
 import org.springframework.amqp.core.TopicExchange;
+import org.springframework.amqp.rabbit.annotation.RabbitHandler;
 import org.springframework.amqp.rabbit.connection.CachingConnectionFactory;
 import org.springframework.amqp.rabbit.connection.ConnectionFactory;
+import org.springframework.amqp.rabbit.core.RabbitAdmin;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.amqp.rabbit.support.CorrelationData;
 import org.springframework.context.annotation.Bean;
@@ -26,7 +31,7 @@ import java.util.Map;
  * @Version 1.0
  **/
 @Configuration
-@ComponentScan("com.ant")
+//@ComponentScan("com.ant")
 public class RabbitMqConfig {
 
     @Bean
@@ -53,21 +58,25 @@ public class RabbitMqConfig {
     }
 
     @Bean
-    public RabbitTemplate rabbitTemplate(ConnectionFactory connectionFactory, MyReturnCallback returnCallback,
-                                         MyConfirmCallback confirmCallback, MyMessageConverter messageConverter) {
+    public RabbitTemplate rabbitTemplate(ConnectionFactory connectionFactory) {
         RabbitTemplate rabbitTemplate = new RabbitTemplate(connectionFactory);
-
-        // 设置消息确认
-        rabbitTemplate.setConfirmCallback(confirmCallback);
-
-        rabbitTemplate.setMandatory(true);
+        // 设置消息确认（到交换机）
+        rabbitTemplate.setConfirmCallback(confirmCallback());
         // 设置失败回调
-        rabbitTemplate.setReturnCallback(returnCallback);
-
+        rabbitTemplate.setMandatory(true);
+        rabbitTemplate.setReturnCallback(returnCallback());
         // 设置消息解析器
-        rabbitTemplate.setMessageConverter(messageConverter);
-
+        rabbitTemplate.setMessageConverter(messageConverter());
         return rabbitTemplate;
+    }
+
+    @Bean
+    public RabbitAdmin rabbitAdmin(ConnectionFactory connectionFactory) {
+        RabbitAdmin admin = new RabbitAdmin(connectionFactory);
+        admin.declareExchange(directExchange());
+        admin.declareExchange(topicExchange());
+        admin.declareExchange(batDirectExchange());
+        return admin;
     }
 
     /**
@@ -76,7 +85,7 @@ public class RabbitMqConfig {
      * @return
      **/
     @Bean
-    public TopicExchange directExchange() {
+    public TopicExchange topicExchange() {
         // 生命一个备用交换机
         Map<String, Object> map = new HashMap<>();
         map.put("alternate-exchange", "batExchange");
@@ -91,6 +100,40 @@ public class RabbitMqConfig {
     @Bean
     public TopicExchange batDirectExchange() {
         return new TopicExchange("batExchange", false, false);
+    }
+
+
+    @Bean
+    public DirectExchange directExchange() {
+        DirectExchange directExchange = new DirectExchange("deadExchange", true, false);
+        return directExchange;
+    }
+
+    @Bean
+    public Queue topicQueue() {
+        Map<String, Object> map = new HashMap<>();
+        map.put("x-dead-letter-exchange", "deadExchange");
+        map.put("x-dead-letter-routing-key", "deadKey");
+        Queue queue = new Queue("antQueue", true, false, false, map);
+        return queue;
+    }
+
+    @Bean
+    public Queue queue() {
+        Queue queue = new Queue("deadQueue", true, false, false);
+        return queue;
+    }
+
+    @Bean
+    public Binding topicBinding() {
+        Binding binding = BindingBuilder.bind(topicQueue()).to(topicExchange()).with("debug.order.B");
+        return binding;
+    }
+
+    @Bean
+    public Binding binding() {
+        Binding binding = BindingBuilder.bind(queue()).to(directExchange()).with("deadKey");
+        return binding;
     }
 
     @Bean

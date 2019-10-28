@@ -60,7 +60,7 @@ public class RabbitMqConfig {
 //        //
 //        messageListenerContainer.setAcknowledgeMode(AcknowledgeMode.MANUAL);
 //
-//        return messageListenerContainer;
+//        returns messageListenerContainer;
 //    }
 
     @Bean

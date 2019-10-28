@@ -1,0 +1,16 @@
+spring:
+  rabbitmq:
+    publisher-confirms: true
+    addresses: ${RABBITMQ_ADDRESSES:rabbitmq:30007}
+    username: ${RABBITMQ_USERNEM:guest}
+    password: ${RABBITMQ_PASSWORD:guest}
+
+
+rabbitmq:
+  config:
+    exchange:
+      points:
+        pointsExchange: exchange
+    queue:
+      points:
+        pointsQueue: antQueue

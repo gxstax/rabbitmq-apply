@@ -37,7 +37,7 @@ public class MessageAccept {
 //    }
 //
 //    public boolean placeOrder() {
-//        return true;
+//        returns true;
 //    }
 
     @RabbitListener(queues = "antQueue", containerFactory = "simpleRabbitListenerContainerFactory")

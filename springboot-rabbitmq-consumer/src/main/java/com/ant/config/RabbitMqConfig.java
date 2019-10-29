@@ -2,6 +2,10 @@ package com.ant.config;
 
 import com.ant.listener.MyMessageListener;
 import org.springframework.amqp.core.AcknowledgeMode;
+import org.springframework.amqp.core.Binding;
+import org.springframework.amqp.core.BindingBuilder;
+import org.springframework.amqp.core.DirectExchange;
+import org.springframework.amqp.core.Queue;
 import org.springframework.amqp.rabbit.config.SimpleRabbitListenerContainerFactory;
 import org.springframework.amqp.rabbit.connection.CachingConnectionFactory;
 import org.springframework.amqp.rabbit.connection.ConnectionFactory;
@@ -9,6 +13,9 @@ import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.amqp.rabbit.listener.SimpleMessageListenerContainer;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+
+import java.util.HashMap;
+import java.util.Map;
 
 
 /**
@@ -72,6 +79,42 @@ public class RabbitMqConfig {
     @Bean
     public MyMessageListener messageListener() {
         return new MyMessageListener();
+    }
+    
+    
+    /**  定义死信交换机**/
+
+    @Bean
+    public DirectExchange deadTopicExchange() {
+        return new DirectExchange("deadTopicExchange");
+    }
+
+
+    @Bean
+    public Queue orderQueue() {
+        Map<String, Object> map = new HashMap<>();
+        // 绑定死信交换机
+        map.put("x-dead-letter-exchange", "deadTopicExchange");
+        // 重定向路由键
+        map.put("x-dead-letter-routing-key", "deadQueue");
+        // 定义绑定的死信交换机
+        /**
+         * durable:是否持久化
+         * exclusive: 是否是排他队列
+         * autoDelete：是否自动删除
+         **/
+        return new Queue("orderQueue", true, false, false, map);
+    }
+
+    @Bean
+    public Binding binding() {
+        return BindingBuilder.bind(deadQueue()).to(deadTopicExchange()).with("deadQueue");
+    }
+
+    @Bean
+    public Queue deadQueue() {
+        Map<String, Object> map = new HashMap<>();
+        return new Queue("deadQueue", true, false, false, map);
     }
 
 }

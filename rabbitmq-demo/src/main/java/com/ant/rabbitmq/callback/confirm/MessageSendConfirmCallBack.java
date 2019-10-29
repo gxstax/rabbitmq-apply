@@ -12,7 +12,7 @@ import org.springframework.stereotype.Component;
  * @author GaoXin
  * @since 2019-09-29 13:04
  */
-@Component
+
 public class MessageSendConfirmCallBack implements RabbitTemplate.ConfirmCallback {
 
     /**

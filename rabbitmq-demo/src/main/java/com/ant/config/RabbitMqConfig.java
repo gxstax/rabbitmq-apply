@@ -1,9 +1,11 @@
 package com.ant.config;
 
+import org.springframework.amqp.core.AcknowledgeMode;
 import org.springframework.amqp.core.Binding;
 import org.springframework.amqp.core.BindingBuilder;
 import org.springframework.amqp.core.Queue;
 import org.springframework.amqp.core.TopicExchange;
+import org.springframework.amqp.rabbit.config.SimpleRabbitListenerContainerFactory;
 import org.springframework.amqp.rabbit.connection.CachingConnectionFactory;
 import org.springframework.amqp.rabbit.connection.ConnectionFactory;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
@@ -47,7 +49,7 @@ public class RabbitMqConfig {
         connectionFactory.setAddresses(address);
         connectionFactory.setUsername(username);
         connectionFactory.setPassword(password);
-//        connectionFactory.setVirtualHost("");
+        connectionFactory.setVirtualHost("/");
         // 是否开启消息确认机制
         connectionFactory.setPublisherConfirms(true);
         return connectionFactory;
@@ -75,6 +77,19 @@ public class RabbitMqConfig {
     @Bean
     public Binding topicBinding() {
         return BindingBuilder.bind(topicQueue()).to(topicExchange()).with("debug.order.B");
+    }
+
+    @Bean
+    public SimpleRabbitListenerContainerFactory simpleRabbitListenerContainerFactory(ConnectionFactory connectionFactory) {
+        SimpleRabbitListenerContainerFactory simpleRabbitListenerContainerFactory = new SimpleRabbitListenerContainerFactory();
+        // 设置连接工厂
+        simpleRabbitListenerContainerFactory.setConnectionFactory(connectionFactory);
+        // 设置消息确认模式（自动、手动、不确认）
+        simpleRabbitListenerContainerFactory.setAcknowledgeMode(AcknowledgeMode.MANUAL);
+        // 设置消息预取条数
+        simpleRabbitListenerContainerFactory.setPrefetchCount(2500);
+
+        return simpleRabbitListenerContainerFactory;
     }
 
 

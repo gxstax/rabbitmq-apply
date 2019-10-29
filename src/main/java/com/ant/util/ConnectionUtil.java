@@ -29,6 +29,13 @@ public class ConnectionUtil {
 
 
 
+    public static final String TOPIC_HEY_TEA_PAY = "Heytea.service.member.*.payOrderQueue";
+    public static final String TOPIC_HEY_TEA_REFUND = "Heytea.service.member.*.refundOrderQueue";
+
+
+
+
+
     public static final String EXCHANGE_NAME = "exchange";
 
     /**
@@ -47,6 +54,26 @@ public class ConnectionUtil {
         connectionFactory.setPort(5672);
         connectionFactory.setUsername("ant");
         connectionFactory.setPassword("370828");
+        connectionFactory.setVirtualHost("/");
+        return connectionFactory.newConnection();
+    }
+
+    /**
+     * 获取rabbitmq连接
+     * @Param []
+     * @return com.rabbitmq.client.Connection
+     **/
+    public static Connection getHeyteaConnection() throws IOException, TimeoutException {
+        // 创建一个连接工厂
+        ConnectionFactory connectionFactory = new ConnectionFactory();
+
+        // 设置rabbitmq 服务端所在地址
+        connectionFactory.setHost("49.235.129.28");
+
+        // 设置端口号，连接用户名， VirtualHost等
+        connectionFactory.setPort(30007);
+        connectionFactory.setUsername("guest");
+        connectionFactory.setPassword("guest");
         connectionFactory.setVirtualHost("/");
         return connectionFactory.newConnection();
     }

@@ -11,35 +11,44 @@ import java.io.IOException;
 import java.util.concurrent.TimeoutException;
 
 /**
- * @ClassName Consumer
- * @Description Consumer
- * @Author Ant
- * @Date 2019-06-14 11:19
- * @Version 1.0
- **/
-public class Consumer2 {
+ * <p>
+ * 功能描述
+ * </p>
+ *
+ * @author GaoXin
+ * @since 2019-10-22 14:24
+ */
+public class HeyteaConsumer {
+//    private static final String QUEUE_NAMEC_POINTS_PAY_ORDER = "Heytea.service.member.points.payOrderQueue";
+//    private static final String QUEUE_NAMEC_POINTS_PAY_ORDER = "heytea.processor.member.queue.activity.order.send.coupons";
+//    private static final String QUEUE_NAMEC_POINTS_PAY_ORDER = "Heytea.service.member.coupon.payOrderQueue";
+//    private static final String QUEUE_NAMEC_POINTS_PAY_ORDER = "Heytea.service.member.points.refundOrderQueue";
+    private static final String QUEUE_NAMEC_POINTS_PAY_ORDER = "Heytea.service.member.experience.refundOrderQueue";
+//    private static final String QUEUE_NAMEC_POINTS_PAY_ORDER = "Heytea.service.member.coupon.refundOrderQueue";
+
+
     public static void main(String[] args) throws IOException, TimeoutException {
         // 建立连接
-        Connection connection = ConnectionUtil.getConnection();
+        Connection connection = ConnectionUtil.getHeyteaConnection();
 
         // 建立信道
         final Channel channel = connection.createChannel();
 
-        // 绑定队列
-        channel.queueDeclare("heytea.processor.member.queue.activity.order.send.coupons", true, false, false, null);
+        // 定义队列
+        channel.queueDeclare(QUEUE_NAMEC_POINTS_PAY_ORDER, true, false, false, null);
 
         DefaultConsumer deliverCallback = new DefaultConsumer(channel) {
             @Override
             public void handleDelivery(String consumerTag, Envelope envelope, AMQP.BasicProperties properties, byte[] body) throws IOException {
                 System.out.println(new String(body, "UTF-8"));
-                channel.basicAck(envelope.getDeliveryTag(), true);
+                channel.basicAck(envelope.getDeliveryTag(), false);
             }
         };
 
         // 开始消费，这里是手动确认，手动确认要防止消息堆积问题
 //        channel.basicConsume(ConnectionUtil.QUENU_NAME, deliverCallback);
         // 这里的第二个参数true，如果设置，则进行消息确认
-        channel.basicConsume("heytea.processor.member.queue.activity.order.send.coupons", true, deliverCallback);
+        channel.basicConsume(QUEUE_NAMEC_POINTS_PAY_ORDER, true, deliverCallback);
 
         channel.close();
         connection.close();

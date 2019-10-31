@@ -3,6 +3,7 @@ package com.ant.config;
 import org.springframework.amqp.core.AcknowledgeMode;
 import org.springframework.amqp.core.Binding;
 import org.springframework.amqp.core.BindingBuilder;
+import org.springframework.amqp.core.DirectExchange;
 import org.springframework.amqp.core.Queue;
 import org.springframework.amqp.core.TopicExchange;
 import org.springframework.amqp.rabbit.config.SimpleRabbitListenerContainerFactory;
@@ -15,6 +16,9 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Scope;
+
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * <p>
@@ -64,20 +68,97 @@ public class RabbitMqConfig {
         return rabbitTemplate;
     }
 
+//    @Bean
+//    public TopicExchange topicExchange() {
+//        return new TopicExchange(exchange, false, false);
+//    }
+//
+//    @Bean
+//    public Queue topicQueue() {
+//        return new Queue(queue, true, false, false);
+//    }
+//
+//    @Bean
+//    public Binding topicBinding() {
+//        return BindingBuilder.bind(topicQueue()).to(topicExchange()).with("debug.order.B");
+//    }
+
+
+
+
+
+
     @Bean
-    public TopicExchange topicExchange() {
-        return new TopicExchange(exchange, false, false);
+    public DirectExchange deadTopicExchange() {
+        return new DirectExchange("deadExchange");
     }
 
     @Bean
-    public Queue topicQueue() {
-        return new Queue(queue, true, false, false);
+    @Scope(ConfigurableBeanFactory.SCOPE_PROTOTYPE)
+    public Map deadExchangeConfigMap() {
+        Map<String, Object> map = new HashMap<>(2);
+        // 绑定死信交换机
+        map.put("x-dead-letter-exchange", "deadExchange");
+
+        return map;
     }
 
     @Bean
-    public Binding topicBinding() {
-        return BindingBuilder.bind(topicQueue()).to(topicExchange()).with("debug.order.B");
+    public Queue orderQueue(Map deadExchangeConfigMap) {
+//        Map map = deadExchangeConfigMap();
+//        // 定义绑定的死信交换机
+//        Map<String, Object> map = new HashMap<>(2);
+//        // 绑定死信交换机
+//        map.put("x-dead-letter-exchange", "deadExchange");
+        // 重定向路由键
+        deadExchangeConfigMap.put("x-dead-letter-routing-key", "deadQueue");
+        /**
+         * durable:是否持久化
+         * exclusive: 是否是排他队列
+         * autoDelete：是否自动删除
+         **/
+        return new Queue("orderQueue", true, false, false, deadExchangeConfigMap);
     }
+
+    @Bean
+    public Queue orderQueue1(Map deadExchangeConfigMap) {
+//        Map map = deadExchangeConfigMap();
+//        Map<String, Object> map = new HashMap<>(2);
+//        // 绑定死信交换机
+//        map.put("x-dead-letter-exchange", "deadExchange");
+        // 重定向路由键
+        deadExchangeConfigMap.put("x-dead-letter-routing-key", "deadQueue2");
+        // 定义绑定的死信交换机
+        /**
+         * durable:是否持久化
+         * exclusive: 是否是排他队列
+         * autoDelete：是否自动删除
+         **/
+        return new Queue("orderQueue1", true, false, false, deadExchangeConfigMap);
+    }
+
+    @Bean
+    public Queue deadQueue() {
+        Map<String, Object> map = new HashMap<>();
+        return new Queue("deadQueue", true, false, false, map);
+    }
+
+    @Bean
+    public Queue deadQueue2() {
+        Map<String, Object> map = new HashMap<>();
+        return new Queue("deadQueue2", true, false, false, map);
+    }
+
+    @Bean
+    public Binding binding1() {
+        return BindingBuilder.bind(deadQueue()).to(deadTopicExchange()).with("deadQueue");
+    }
+
+    @Bean
+    public Binding binding2() {
+        return BindingBuilder.bind(deadQueue2()).to(deadTopicExchange()).with("deadQueue2");
+    }
+
 
     @Bean
     public SimpleRabbitListenerContainerFactory simpleRabbitListenerContainerFactory(ConnectionFactory connectionFactory) {

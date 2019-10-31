@@ -24,7 +24,7 @@ public class PayOrderQueueReceive {
 
 
 
-    @RabbitListener(queues = "heytea.processor.member.queue.activity.order.send.coupons", containerFactory = "simpleRabbitListenerContainerFactory")
+    @RabbitListener(queues = "Heytea.service.member.experience.refundOrderQueue", containerFactory = "simpleRabbitListenerContainerFactory")
     public void getPointsQueueMessage(Message message, Channel channel) throws IOException {
         try {
 
@@ -57,5 +57,68 @@ public class PayOrderQueueReceive {
         }
     }
 
+
+    @RabbitListener(queues = "orderQueue", containerFactory = "simpleRabbitListenerContainerFactory")
+    public void orderQueue(Message message, Channel channel) throws IOException {
+        try {
+
+            if (true) {
+                // 查询订单信息和会员信息
+//
+                System.out.println(new String(message.getBody(), "UTF-8"));
+
+                // TODO .... 具体业务
+                // 消息确认
+//                channel.basicAck(message.getMessageProperties().getDeliveryTag(), false);
+                channel.basicNack(message.getMessageProperties().getDeliveryTag(), false, false);
+
+                System.out.println("oerderQueue 消息退回");
+            } else {
+                /**
+                 * 消息退回 (批量)
+                 * 参数说明：
+                 *  消息唯一标志
+                 *  是否批量退回 false 否 true 是
+                 *  是否退回消息队列 true：是 false：否
+                 */
+//                channel.basicNack(message.getMessageProperties().getDeliveryTag(), true, false);
+                channel.basicAck(message.getMessageProperties().getDeliveryTag(), false);
+
+            }
+        } catch (Exception e) {
+            // 发生异常进行消息退回
+//            channel.basicNack(message.getMessageProperties().getDeliveryTag(), true, true);
+            channel.basicAck(message.getMessageProperties().getDeliveryTag(), false);
+
+
+        }
+    }
+
+    @RabbitListener(queues = "orderQueue1", containerFactory = "simpleRabbitListenerContainerFactory")
+    public void orderQueue1(Message message, Channel channel) throws IOException {
+        try {
+            channel.basicNack(message.getMessageProperties().getDeliveryTag(), false, false);
+
+            System.out.println("oerderQueue1 消息退回");
+
+        } catch (Exception e) {
+            channel.basicAck(message.getMessageProperties().getDeliveryTag(), false);
+        }
+    }
+
+
+
+
+//    @RabbitListener(queues = "deadQueue", containerFactory = "simpleRabbitListenerContainerFactory")
+//    public void deadQueue(Message message, Channel channel) throws IOException {
+//        try {
+//            System.out.println("死信队列deadQueue消费到了消息：" + new String(message.getBody(), "UTF-8"));
+//            channel.basicAck(message.getMessageProperties().getDeliveryTag(), false);
+//        } catch (Exception e) {
+//            // 发生异常进行消息退回
+//            channel.basicNack(message.getMessageProperties().getDeliveryTag(), true, false);
+//
+//        }
+//    }
 
 }

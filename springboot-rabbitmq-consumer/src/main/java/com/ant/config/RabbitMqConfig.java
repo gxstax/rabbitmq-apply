@@ -86,24 +86,31 @@ public class RabbitMqConfig {
 
     @Bean
     public DirectExchange deadTopicExchange() {
-        return new DirectExchange("deadTopicExchange");
+        return new DirectExchange("deadExchange");
     }
 
 
     @Bean
-    public Queue orderQueue() {
+    public Map deadExchangeConfigMap() {
         Map<String, Object> map = new HashMap<>();
         // 绑定死信交换机
-        map.put("x-dead-letter-exchange", "deadTopicExchange");
+        map.put("x-dead-letter-exchange", "deadExchange");
         // 重定向路由键
         map.put("x-dead-letter-routing-key", "deadQueue");
+
+        return map;
+    }
+
+    @Bean
+    public Queue orderQueue() {
+
         // 定义绑定的死信交换机
         /**
          * durable:是否持久化
          * exclusive: 是否是排他队列
          * autoDelete：是否自动删除
          **/
-        return new Queue("orderQueue", true, false, false, map);
+        return new Queue("orderQueue", true, false, false, deadExchangeConfigMap());
     }
 
     @Bean

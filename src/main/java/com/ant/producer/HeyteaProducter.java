@@ -17,12 +17,17 @@ import java.util.concurrent.TimeoutException;
  * @since 2019-10-22 10:33
  */
 public class HeyteaProducter {
-//    private static final String QUEUE_NAME1_POINTS_PAY_ORDER = "Heytea.service.member.points.payOrderQueue";
-    private static final String QUEUE_NAME1_POINTS_PAY_ORDER = "Heytea.service.member.experience.payOrderQueue";
+//    private static final String QUEUE_NAME1_POINTS_PAY_ORDER = "heytea.service.member.points.payOrderQueue";
+//    private static final String QUEUE_NAME1_POINTS_PAY_ORDER = "Heytea.service.member.experience.payOrderQueue";
 //    private static final String QUEUE_NAME1_POINTS_PAY_ORDER = "Heytea.service.member.coupon.payOrderQueue";
 //    private static final String QUEUE_NAME1_POINTS_PAY_ORDER = "Heytea.service.member.points.refundOrderQueue";
 //    private static final String QUEUE_NAME1_POINTS_PAY_ORDER = "Heytea.service.member.experience.refundOrderQueue";
 //    private static final String QUEUE_NAME1_POINTS_PAY_ORDER = "Heytea.service.member.coupon.refundOrderQueue";
+
+
+    private static final String QUEUE_NAME1_POINTS_PAY_ORDER = "antQueue";
+//    private static final String QUEUE_NAME1_POINTS_PAY_ORDER1 = "orderQueue1";
+
 
     private static final String EXCHANGE_NAME = "";
 
@@ -33,16 +38,17 @@ public class HeyteaProducter {
         // 创建一个信道
         Channel channel = connection.createChannel();
 
-//        channel.queueDelete("Heytea.service.member.experience.payOrderQueue");
+        channel.queueDelete(QUEUE_NAME1_POINTS_PAY_ORDER);
 
         channel.queueDeclare(QUEUE_NAME1_POINTS_PAY_ORDER, true, false, false, null);
 
         // 定义一个交换机
-//        channel.exchangeDelete(ConnectionUtil.EXCHANGE_NAME);
-//        channel.exchangeDeclare(ConnectionUtil.EXCHANGE_NAME, BuiltinExchangeType.TOPIC);
+        channel.exchangeDelete(ConnectionUtil.EXCHANGE_NAME);
+        channel.exchangeDeclare(ConnectionUtil.EXCHANGE_NAME, BuiltinExchangeType.TOPIC);
 
         // 绑定交换机与队列
-        channel.queueBind(QUEUE_NAME1_POINTS_PAY_ORDER, ConnectionUtil.EXCHANGE_NAME, ConnectionUtil.TOPIC_HEY_TEA_PAY);
+        channel.queueBind(QUEUE_NAME1_POINTS_PAY_ORDER, ConnectionUtil.EXCHANGE_NAME, "ant");
+//        channel.queueBind(QUEUE_NAME1_POINTS_PAY_ORDER1, ConnectionUtil.EXCHANGE_NAME, "order2");
 //        channel.queueBind(ConnectionUtil.QUENU_NAME_1, ConnectionUtil.EXCHANGE_NAME, ConnectionUtil.TOPIC_1);
 //        channel.queueBind(ConnectionUtil.QUENU_NAME_2, ConnectionUtil.EXCHANGE_NAME, ConnectionUtil.TOPIC_2);
 
@@ -72,7 +78,10 @@ public class HeyteaProducter {
 //            // 发布一条消息
 //            channel.basicPublish(ConnectionUtil.EXCHANGE_NAME, "debug.order.B",null, ("message"+i).getBytes());
 //        }
-        channel.basicPublish(ConnectionUtil.EXCHANGE_NAME, ConnectionUtil.TOPIC_HEY_TEA_PAY ,null, ("{'orderNo':'755001201811191556408027'}").getBytes());
+
+        for (int i = 0; i < 21; i++) {
+            channel.basicPublish(ConnectionUtil.EXCHANGE_NAME, "ant" ,null, ("{'orderNo':'655101201811191556408027'}").getBytes());
+        }
 
 
         // 关闭信道

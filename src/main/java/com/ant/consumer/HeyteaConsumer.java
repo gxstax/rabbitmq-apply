@@ -19,14 +19,14 @@ import java.util.concurrent.TimeoutException;
  * @since 2019-10-22 14:24
  */
 public class HeyteaConsumer {
-//    private static final String QUEUE_NAMEC_POINTS_PAY_ORDER = "Heytea.service.member.points.payOrderQueue";
+    private static final String QUEUE_NAMEC_POINTS_PAY_ORDER = "heytea.service.member.points.payOrderDeadQueue";
 //    private static final String QUEUE_NAMEC_POINTS_PAY_ORDER = "heytea.processor.member.queue.activity.order.send.coupons";
 //    private static final String QUEUE_NAMEC_POINTS_PAY_ORDER = "Heytea.service.member.coupon.payOrderQueue";
 //    private static final String QUEUE_NAMEC_POINTS_PAY_ORDER = "Heytea.service.member.points.refundOrderQueue";
 //    private static final String QUEUE_NAMEC_POINTS_PAY_ORDER = "Heytea.service.member.experience.refundOrderQueue";
 //    private static final String QUEUE_NAMEC_POINTS_PAY_ORDER = "Heytea.service.member.coupon.refundOrderQueue";
 
-    private static final String QUEUE_NAME_POINTS_PAY_ORDER = "antQueue";
+//    private static final String QUEUE_NAME_POINTS_PAY_ORDER = "antQueue";
 
 
     public static void main(String[] args) throws IOException, TimeoutException {
@@ -49,9 +49,9 @@ public class HeyteaConsumer {
                 System.out.println("isRedeliver:" + envelope.isRedeliver());
                 System.out.println("consumerTag:" + consumerTag);
                 System.out.println("properties" + properties);
-                if (envelope.getDeliveryTag() % 10 == 0) {
-                    channel.basicAck(envelope.getDeliveryTag(), true);
-                }
+
+//                channel.basicAck(envelope.getDeliveryTag(), true);
+
 
             }
         };
@@ -59,11 +59,11 @@ public class HeyteaConsumer {
         // 开始消费，这里是手动确认，手动确认要防止消息堆积问题
 //        channel.basicConsume(ConnectionUtil.QUENU_NAME, deliverCallback);
         // 这里的第二个参数true，如果设置，则进行消息确认
-        channel.basicConsume(QUEUE_NAME_POINTS_PAY_ORDER, false, deliverCallback);
+        channel.basicConsume(QUEUE_NAMEC_POINTS_PAY_ORDER, false, deliverCallback);
 
 
 
-//        channel.close();
-//        connection.close();
+        channel.close();
+        connection.close();
     }
 }

@@ -168,7 +168,7 @@ public class RabbitMqConfig {
         // 设置消息确认模式（自动、手动、不确认）
         simpleRabbitListenerContainerFactory.setAcknowledgeMode(AcknowledgeMode.MANUAL);
         // 设置消息预取条数
-        simpleRabbitListenerContainerFactory.setPrefetchCount(2500);
+        simpleRabbitListenerContainerFactory.setPrefetchCount(50);
 
         return simpleRabbitListenerContainerFactory;
     }

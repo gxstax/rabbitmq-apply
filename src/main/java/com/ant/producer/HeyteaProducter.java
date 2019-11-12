@@ -1,7 +1,6 @@
 package com.ant.producer;
 
 import com.ant.util.ConnectionUtil;
-import com.rabbitmq.client.BuiltinExchangeType;
 import com.rabbitmq.client.Channel;
 import com.rabbitmq.client.Connection;
 
@@ -38,16 +37,16 @@ public class HeyteaProducter {
         // 创建一个信道
         Channel channel = connection.createChannel();
 
-        channel.queueDelete(QUEUE_NAME1_POINTS_PAY_ORDER);
+//        channel.queueDelete(QUEUE_NAME1_POINTS_PAY_ORDER);
 
-        channel.queueDeclare(QUEUE_NAME1_POINTS_PAY_ORDER, true, false, false, null);
+//        channel.queueDeclare(QUEUE_NAME1_POINTS_PAY_ORDER, true, false, false, null);
 
         // 定义一个交换机
-        channel.exchangeDelete(ConnectionUtil.EXCHANGE_NAME);
-        channel.exchangeDeclare(ConnectionUtil.EXCHANGE_NAME, BuiltinExchangeType.TOPIC);
+//        channel.exchangeDelete(ConnectionUtil.EXCHANGE_NAME);
+//        channel.exchangeDeclare(ConnectionUtil.EXCHANGE_NAME, BuiltinExchangeType.TOPIC);
 
         // 绑定交换机与队列
-        channel.queueBind(QUEUE_NAME1_POINTS_PAY_ORDER, ConnectionUtil.EXCHANGE_NAME, "ant");
+//        channel.queueBind(QUEUE_NAME1_POINTS_PAY_ORDER, ConnectionUtil.EXCHANGE_NAME, "ant");
 //        channel.queueBind(QUEUE_NAME1_POINTS_PAY_ORDER1, ConnectionUtil.EXCHANGE_NAME, "order2");
 //        channel.queueBind(ConnectionUtil.QUENU_NAME_1, ConnectionUtil.EXCHANGE_NAME, ConnectionUtil.TOPIC_1);
 //        channel.queueBind(ConnectionUtil.QUENU_NAME_2, ConnectionUtil.EXCHANGE_NAME, ConnectionUtil.TOPIC_2);
@@ -79,8 +78,8 @@ public class HeyteaProducter {
 //            channel.basicPublish(ConnectionUtil.EXCHANGE_NAME, "debug.order.B",null, ("message"+i).getBytes());
 //        }
 
-        for (int i = 0; i < 21; i++) {
-            channel.basicPublish(ConnectionUtil.EXCHANGE_NAME, "ant" ,null, ("{'orderNo':'655101201811191556408027'}").getBytes());
+        for (int i = 0; i < 100; i++) {
+            channel.basicPublish(ConnectionUtil.EXCHANGE_NAME, "payorder.points.experience.coupon" ,null, ("{'orderNo':'655101201811191556408027'}").getBytes());
         }
 
 

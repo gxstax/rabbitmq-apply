@@ -1,17 +1,21 @@
 package com.ant.config;
 
+import com.ant.rabbitmq.converter.MyMessageConverter;
+import com.ant.rabbitmq.converter.MyMessageHandle;
 import org.springframework.amqp.core.AcknowledgeMode;
 import org.springframework.amqp.core.Binding;
 import org.springframework.amqp.core.BindingBuilder;
 import org.springframework.amqp.core.DirectExchange;
 import org.springframework.amqp.core.Queue;
-import org.springframework.amqp.core.TopicExchange;
 import org.springframework.amqp.rabbit.config.SimpleRabbitListenerContainerFactory;
 import org.springframework.amqp.rabbit.connection.CachingConnectionFactory;
 import org.springframework.amqp.rabbit.connection.ConnectionFactory;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
+import org.springframework.amqp.rabbit.listener.SimpleMessageListenerContainer;
+import org.springframework.amqp.rabbit.listener.adapter.MessageListenerAdapter;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.beans.factory.config.ConfigurableBeanFactory;
+import org.springframework.boot.autoconfigure.amqp.SimpleRabbitListenerContainerFactoryConfigurer;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
@@ -161,16 +165,55 @@ public class RabbitMqConfig {
 
 
     @Bean
-    public SimpleRabbitListenerContainerFactory simpleRabbitListenerContainerFactory(ConnectionFactory connectionFactory) {
+    public SimpleRabbitListenerContainerFactory simpleRabbitListenerContainerFactory(ConnectionFactory connectionFactory, SimpleRabbitListenerContainerFactoryConfigurer configurer) {
         SimpleRabbitListenerContainerFactory simpleRabbitListenerContainerFactory = new SimpleRabbitListenerContainerFactory();
+
         // 设置连接工厂
-        simpleRabbitListenerContainerFactory.setConnectionFactory(connectionFactory);
+//        simpleRabbitListenerContainerFactory.setConnectionFactory(connectionFactory);
         // 设置消息确认模式（自动、手动、不确认）
         simpleRabbitListenerContainerFactory.setAcknowledgeMode(AcknowledgeMode.MANUAL);
         // 设置消息预取条数
         simpleRabbitListenerContainerFactory.setPrefetchCount(50);
 
+        configurer.configure(simpleRabbitListenerContainerFactory, connectionFactory);
+
+        simpleRabbitListenerContainerFactory.setMessageConverter(new MyMessageConverter());
+
+
         return simpleRabbitListenerContainerFactory;
+    }
+
+    @Bean
+    public SimpleMessageListenerContainer simpleRabbitListenerContainer(ConnectionFactory connectionFactory) {
+        SimpleMessageListenerContainer simpleMessageListenerContainer = new SimpleMessageListenerContainer();
+
+        // 设置连接工厂
+        simpleMessageListenerContainer.setConnectionFactory(connectionFactory);
+        // 设置消息确认模式（自动、手动、不确认）
+        simpleMessageListenerContainer.setAcknowledgeMode(AcknowledgeMode.MANUAL);
+        // 设置消息预取条数
+        simpleMessageListenerContainer.setPrefetchCount(50);
+
+        MessageListenerAdapter adapter = new MessageListenerAdapter(new MyMessageHandle());
+
+        adapter.setDefaultListenerMethod("onMessage");
+
+        adapter.setMessageConverter(new MyMessageConverter());
+
+        simpleMessageListenerContainer.setMessageListener(adapter);
+
+
+        SimpleRabbitListenerContainerFactory factory = new SimpleRabbitListenerContainerFactory();
+
+
+        return simpleMessageListenerContainer;
+    }
+
+
+    @Bean
+    MyMessageConverter myMessageConverter(){
+        MyMessageConverter messageConverter = new MyMessageConverter();
+        return messageConverter;
     }
 
 

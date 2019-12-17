@@ -33,14 +33,23 @@ public class RabbitMqConfig {
         // 创建一个连接工厂
         CachingConnectionFactory connectionFactory = new CachingConnectionFactory();
         // 设置rabbitmq 服务端所在地址
-        connectionFactory.setHost("192.168.1.13");
-        // 设置端口号
-        connectionFactory.setPort(5672);
-        // 设置连接用户名
-        connectionFactory.setUsername("ant");
-        // 设置连接密码
-        connectionFactory.setPassword("370828");
-        // 设置VirtualHost
+//        connectionFactory.setHost("192.168.1.13");
+//        // 设置端口号
+//        connectionFactory.setPort(5672);
+//        // 设置连接用户名
+//        connectionFactory.setUsername("ant");
+//        // 设置连接密码
+//        connectionFactory.setPassword("370828");
+//        // 设置VirtualHost
+//        connectionFactory.setVirtualHost("/");
+
+        // 设置rabbitmq 服务端所在地址
+        connectionFactory.setHost("49.235.129.28");
+
+        // 设置端口号，连接用户名， VirtualHost等
+        connectionFactory.setPort(30007);
+        connectionFactory.setUsername("guest");
+        connectionFactory.setPassword("guest");
         connectionFactory.setVirtualHost("/");
 
         return connectionFactory;
@@ -80,8 +89,8 @@ public class RabbitMqConfig {
     public MyMessageListener messageListener() {
         return new MyMessageListener();
     }
-    
-    
+
+
     /**  定义死信交换机**/
 
     @Bean

@@ -4,7 +4,7 @@ import com.ant.rabbitmq.callback.confirm.MessageSendConfirmCallBack;
 import com.ant.rabbitmq.server.RabbitMqService;
 import org.springframework.amqp.core.Message;
 import org.springframework.amqp.core.MessageProperties;
-import org.springframework.amqp.rabbit.support.CorrelationData;
+import org.springframework.amqp.rabbit.connection.CorrelationData;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 

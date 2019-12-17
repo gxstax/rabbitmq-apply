@@ -6,7 +6,7 @@
     <parent>
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-starter-parent</artifactId>
-        <version>2.0.2.RELEASE</version>
+        <version>2.1.8.RELEASE</version>
     </parent>
 
     <groupId>com.ant</groupId>
@@ -16,11 +16,8 @@
     <modules>
         <module>springboot-rabbitmq-productor</module>
         <module>springboot-rabbitmq-consumer</module>
-<<<<<<< HEAD
         <module>rabbitmq-cluster-demo</module>
-=======
         <module>rabbitmq-demo</module>
->>>>>>> 333ffb23a231b8c46eb734496943c6d2806546d7
     </modules>
 
     <dependencies>

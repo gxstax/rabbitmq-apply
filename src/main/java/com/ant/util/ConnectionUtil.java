@@ -36,7 +36,7 @@ public class ConnectionUtil {
 
 
 
-    public static final String EXCHANGE_NAME = "heytea.service.member.order.exchange";
+    public static final String EXCHANGE_NAME = "exchange";
 
     /**
      * 获取rabbitmq连接

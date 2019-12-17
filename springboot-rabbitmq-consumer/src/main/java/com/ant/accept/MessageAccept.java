@@ -1,12 +1,15 @@
 package com.ant.accept;
 
+import com.ant.listener.Person;
 import com.rabbitmq.client.Channel;
 import org.springframework.amqp.core.Message;
 import org.springframework.amqp.rabbit.annotation.RabbitListener;
+import org.springframework.messaging.handler.annotation.Payload;
 import org.springframework.stereotype.Component;
 
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
+import java.util.Map;
 
 /**
  * @ClassName MessageAccept
@@ -42,15 +45,15 @@ public class MessageAccept {
 
     @RabbitListener(queues = "antQueue", containerFactory = "simpleRabbitListenerContainerFactory")
     public void get2(Message message, Channel channel) throws IOException {
-        System.out.println("消费者2：" + new String(message.getBody(), "UTF-8"));
-//        channel.basicAck(message.getMessageProperties().getDeliveryTag(), false);
-        channel.basicNack(message.getMessageProperties().getDeliveryTag(), true, false);
-        System.out.println("antQueue 消息被退回");
+        System.out.println("message-->：" + new String(message.getBody(), "UTF-8"));
+        channel.basicAck(message.getMessageProperties().getDeliveryTag(), false);
+//        channel.basicNack(message.getMessageProperties().getDeliveryTag(), true, false);
+//        System.out.println("antQueue 消息被退回");
     }
 
-    @RabbitListener(queues = "deadQueue", containerFactory = "simpleRabbitListenerContainerFactory")
-    public void getDead(Message message, Channel channel) throws IOException {
-        System.out.println("deadQueue消费：" + new String(message.getBody(), "UTF-8"));
-        channel.basicAck(message.getMessageProperties().getDeliveryTag(), false);
-    }
+//    @RabbitListener(queues = "deadQueue", containerFactory = "simpleRabbitListenerContainerFactory")
+//    public void getDead(Message message, Channel channel) throws IOException {
+//        System.out.println("deadQueue消费：" + new String(message.getBody(), "UTF-8"));
+//        channel.basicAck(message.getMessageProperties().getDeliveryTag(), false);
+//    }
 }

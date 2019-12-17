@@ -5,6 +5,8 @@ import com.rabbitmq.client.Channel;
 import com.rabbitmq.client.Connection;
 
 import java.io.IOException;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.concurrent.TimeoutException;
 
 /**
@@ -16,6 +18,7 @@ import java.util.concurrent.TimeoutException;
  * @since 2019-10-22 10:33
  */
 public class HeyteaProducter {
+
 //    private static final String QUEUE_NAME1_POINTS_PAY_ORDER = "heytea.service.member.points.payOrderQueue";
 //    private static final String QUEUE_NAME1_POINTS_PAY_ORDER = "Heytea.service.member.experience.payOrderQueue";
 //    private static final String QUEUE_NAME1_POINTS_PAY_ORDER = "Heytea.service.member.coupon.payOrderQueue";
@@ -24,7 +27,7 @@ public class HeyteaProducter {
 //    private static final String QUEUE_NAME1_POINTS_PAY_ORDER = "Heytea.service.member.coupon.refundOrderQueue";
 
 
-    private static final String QUEUE_NAME1_POINTS_PAY_ORDER = "antQueue";
+    private static final String QUEUE_NAME1_POINTS_PAY_ORDER = "heytea.service.member.experience.payOrderDeadQueue";
 //    private static final String QUEUE_NAME1_POINTS_PAY_ORDER1 = "orderQueue1";
 
 
@@ -78,8 +81,10 @@ public class HeyteaProducter {
 //            channel.basicPublish(ConnectionUtil.EXCHANGE_NAME, "debug.order.B",null, ("message"+i).getBytes());
 //        }
 
-        for (int i = 0; i < 100; i++) {
-            channel.basicPublish(ConnectionUtil.EXCHANGE_NAME, "payorder.points.experience.coupon" ,null, ("{'orderNo':'655101201811191556408027'}").getBytes());
+        for (int i = 0; i < 1; i++) {
+//            Map messMap = new HashMap<>(1);
+//            messMap.put("orderNo", "655101201811191556408027");
+            channel.basicPublish(ConnectionUtil.EXCHANGE_NAME, "ant" ,null, ("{'orderNo':'655101201811191556408027'}").getBytes());
         }
 
 

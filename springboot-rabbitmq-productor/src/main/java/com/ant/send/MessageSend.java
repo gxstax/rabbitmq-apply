@@ -1,8 +1,8 @@
 package com.ant.send;
 
 import com.alibaba.fastjson.JSON;
+import org.springframework.amqp.rabbit.connection.CorrelationData;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
-import org.springframework.amqp.rabbit.support.CorrelationData;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -24,9 +24,17 @@ public class MessageSend {
     public void sendMessage(String exchange, String routekey, String message) {
         CorrelationData correlationData = new CorrelationData("orderID");
 
-//        Map<String, String> map = new HashMap<>();
-////        map.put("key1", "value1");
+        Map<String, String> map = new HashMap<>(1);
+        map.put("key1", "value1");
 
-        rabbitTemplate.convertAndSend(exchange, routekey, message, correlationData);
+        System.out.println("发送消息:" + exchange + "-" + routekey);
+
+        Person person = new Person();
+        person.setName("personant");
+
+        rabbitTemplate.convertAndSend(exchange, "ant", map, correlationData);
+        rabbitTemplate.convertAndSend(exchange, "ant", person, correlationData);
+//        rabbitTemplate.convertAndSend(exchange, "ant", JSON.toJSONString(map), correlationData);
+//        rabbitTemplate.convertAndSend(exchange, "ant", JSON.toJSONString(person).getBytes(), correlationData);
     }
 }

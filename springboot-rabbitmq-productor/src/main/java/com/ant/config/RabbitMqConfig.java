@@ -72,8 +72,8 @@ public class RabbitMqConfig {
 //        // 设置失败回调
 //        rabbitTemplate.setMandatory(true);
 //        rabbitTemplate.setReturnCallback(returnCallback());
-        // 设置消息解析器
-//        rabbitTemplate.setMessageConverter(messageConverter());
+         // 设置消息解析器
+        rabbitTemplate.setMessageConverter(messageConverter());
         return rabbitTemplate;
     }
 

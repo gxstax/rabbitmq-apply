@@ -6,6 +6,9 @@ import com.ant.rabbitmq.PayOrderDTO;
 import com.ant.rabbitmq.RabbitMessage;
 import com.rabbitmq.client.Channel;
 import org.springframework.amqp.core.Message;
+import org.springframework.amqp.rabbit.annotation.Exchange;
+import org.springframework.amqp.rabbit.annotation.Queue;
+import org.springframework.amqp.rabbit.annotation.QueueBinding;
 import org.springframework.amqp.rabbit.annotation.RabbitListener;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -118,5 +121,22 @@ public class PayOrderQueueReceive {
 //
 //        }
 //    }
+
+
+    @RabbitListener(bindings = @QueueBinding(
+            value = @Queue(value = "antAnnotationQueue", durable = "true"),
+            exchange = @Exchange(value = "antAnnotationExchange", type = "topic",
+                    ignoreDeclarationExceptions = "true"),
+            key = "antAnnotationKey"))
+    public void deadQueue(Message message, Channel channel) throws IOException {
+        try {
+            System.out.println("死信队列deadQueue消费到了消息：" + new String(message.getBody(), "UTF-8"));
+            channel.basicAck(message.getMessageProperties().getDeliveryTag(), false);
+        } catch (Exception e) {
+            // 发生异常进行消息退回
+            channel.basicNack(message.getMessageProperties().getDeliveryTag(), true, false);
+
+        }
+    }
 
 }

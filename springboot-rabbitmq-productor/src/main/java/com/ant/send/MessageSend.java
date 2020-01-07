@@ -32,8 +32,16 @@ public class MessageSend {
         Person person = new Person();
         person.setName("personant");
 
-        rabbitTemplate.convertAndSend(exchange, "ant", map, correlationData);
-        rabbitTemplate.convertAndSend(exchange, "ant", person, correlationData);
+
+        CorrectRequestFORM correctRequestFORM = new CorrectRequestFORM();
+        correctRequestFORM.setRemark("remark");
+        correctRequestFORM.setSrcOutTradeNo("T8888");
+        correctRequestFORM.setSrcTransCode("T677777676");
+        correctRequestFORM.setUserId(123456);
+
+//        rabbitTemplate.convertAndSend(exchange, "ant", map, correlationData);
+//        rabbitTemplate.convertAndSend(exchange, "ant", person, correlationData);
+        rabbitTemplate.convertAndSend("heytea.processor.member.queue.correct.account.trader.exchange", "correct.account.trader", correctRequestFORM, correlationData);
 //        rabbitTemplate.convertAndSend(exchange, "ant", JSON.toJSONString(map), correlationData);
 //        rabbitTemplate.convertAndSend(exchange, "ant", JSON.toJSONString(person).getBytes(), correlationData);
     }
